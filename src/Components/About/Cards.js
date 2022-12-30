@@ -1,41 +1,32 @@
-import React from "react";
+import React, { useEffect} from "react";
 import FlippableCard from "./FlippableCard";
 import "./Cards.css";
-import qax from "./CardComponents/imgs/qax.png";
+import getAbout from "../../api/getAbout";
+
 
 const Cards = () => {
+
+  const [about, setAbout] = React.useState(null);
+
+  useEffect(() => {
+    getAbout().then((data) => {
+      setAbout(data);
+    });
+  }, []);
+
   return (
     <div className="cards-container">
-      <FlippableCard
-        back="Murad Isayev"
-        front="Backend & UI/UX"
-        className="Murad"
-        used="NestJS"
-      />
-      <FlippableCard
-        front="FrontEnd"
-        back="Nijat Abdullazada"
-        className="Nijat"
-      />
-      <FlippableCard
-        front="Team Lead & Backend"
-        back="Kamal Alasgarli"
-        className="Cumal"
-        photo={qax}
-        used="NestJS"
-      />
-
-      <FlippableCard
-        front="Backend"
-        back="Amina Ismayilzada"
-        className="Amina"
-      />
-      <FlippableCard
-        front="Security &
-      FrontEnd"
-        back="Arif Abdullayev"
-        className="Arif"
-      />
+      {about && about.map((item) => {
+        return (
+          <FlippableCard
+            key={item.id}
+            front={item.role}
+            back={item.fullName}
+            photo={item?.photo}
+            used={item.text}
+          />
+        );
+      })}
     </div>
   );
 };

@@ -1,23 +1,38 @@
-import { Box, Input, useDisclosure, Center, Image, Flex, Badge, Text, Button, Spacer,Select,Heading,FormControl,AlertDialog,
+import { Box, Input, useDisclosure, Flex, Text, Button,Select,Heading,FormControl,AlertDialog,
   AlertDialogBody,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
-AlertDialogCloseButton} from "@chakra-ui/react";
+} from "@chakra-ui/react";
 import React from 'react'
 import { useState,useRef } from "react";
 import "./AuthStyles.css";
 import { BsGoogle } from "react-icons/bs";
 import { CiMail } from "react-icons/ci";
+import signIn from "../../api/login";
+import { useNavigate } from "react-router";
+
 export default function Auth() {
-//shout out to my nigga Turan
+  //shout out to my nigga Turan
   const [clicked, setClicked] = useState(false)
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const cancelRef = useRef()
-  const onClick  = () =>
-  {
-    setClicked(!clicked);    
+  const cancelRef = useRef();
+  const navigate = useNavigate();
+
+  const [signInEmail, setsignInEmail] = useState('');
+  const [signInPassword, setSignInPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState();
+
+  const signInClick = async (e) => {
+    e.preventDefault();
+    const resultToken = await signIn(signInEmail, signInPassword);
+
+    if (!resultToken){
+      setErrorMessage('Invalid credentials');
+      return;
+    } 
+    localStorage.setItem('access_token', resultToken)
+    navigate('/me/profile')
   }
 
   if (!clicked) {
@@ -27,12 +42,13 @@ export default function Auth() {
           <Box  w={"80%"} >
       <Heading>Sign in to The mind</Heading>
       <a className="icon" href="src/Components/Auth/auth#Auth.js"><BsGoogle /></a>
-      <form method="POST" action="/Users/nicat/Desktop/themindfront/The_Mind_Front_End/public">
+      <form>
       <FormControl lineHeight={"3em"}  >
-        <Input bg={"#F4F8F7"} borderRadius={10} border={"none"} type='text' placeholder="username" required w={"55%"} />
-        <Input bg={"#F4F8F7"} borderRadius={10} border={"none"} type='password' placeholder="password" required w={"55%"} />
+        {errorMessage && <Text color="red">{errorMessage}</Text>}
+        <Input onChange={(e) => setsignInEmail(e.target.value)} bg={"#F4F8F7"} borderRadius={10} border={"none"} type='email' placeholder="email" required w={"55%"} />
+        <Input onChange={(e) => setSignInPassword(e.target.value)} bg={"#F4F8F7"} borderRadius={10} border={"none"} type='password' placeholder="password" required w={"55%"} />
         <Text><a href="src/Components/Auth/auth#Auth.js">Forgot your password?</a></Text>
-        <Button type="submit"   transitionDuration={"0.7s"} _hover={{bg:"white", color:"#010E1F" }} border={"1px solid #010E1F"} w={"45%"} p={5} borderRadius={10} bg={"#010E1F"} color={"white"} >Sign In</Button>
+        <Button onClick={(e) => signInClick(e)} type="submit"  transitionDuration={"0.7s"} _hover={{bg:"white", color:"#010E1F" }} border={"1px solid #010E1F"} w={"45%"} p={5} borderRadius={10} bg={"#010E1F"} color={"white"} >Sign In</Button>
       </FormControl>
       </form>
       
@@ -42,7 +58,7 @@ export default function Auth() {
             <Box  w={"80%"} m={"auto"}>
             <Heading >Hello Friend!</Heading>
             <Text   mt={5} mb={10} fontSize={12} >Enter your personal details and start journey with us</Text>
-            <Button onClick={onClick} transitionDuration={"0.7s"} _hover={{bg:"white", color:"black" }} border={"1px solid white"} w={"45%"} p={5} borderRadius={10} bg={"transparent"} color={"white"} >Sign Up</Button>
+            <Button onClick={() => setClicked(!clicked)} transitionDuration={"0.7s"} _hover={{bg:"white", color:"black" }} border={"1px solid white"} w={"45%"} p={5} borderRadius={10} bg={"transparent"} color={"white"} >Sign Up</Button>
             </Box>  
     </Flex>
         
@@ -99,7 +115,7 @@ export default function Auth() {
             <Heading >Welcome Back!</Heading>
             <Text   mt={5} mb={10} fontSize={12} >To keep connected with us please
 login with your personal info </Text>
-            <Button onClick={onClick} transitionDuration={"0.7s"} _hover={{bg:"white", color:"#010E1F" }} border={"1px solid white"} w={"45%"} p={5} borderRadius={10} bg={"transparent"} color={"white"} >Sign In</Button>
+            <Button onClick={()=> setClicked(!clicked)} transitionDuration={"0.7s"} _hover={{bg:"white", color:"#010E1F" }} border={"1px solid white"} w={"45%"} p={5} borderRadius={10} bg={"transparent"} color={"white"} >Sign In</Button>
             </Box>  
         </Flex>
         

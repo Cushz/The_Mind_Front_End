@@ -1,12 +1,8 @@
-import React from 'react';
-import './WaitingRoomStyles.css'
+import React from "react";
+import "./WaitingRoomStyles.css";
 
 const WaitingRoom = () => {
-    return (
-        <div>
-            
-        </div>
-    );
+  return <div className="waiting-room"></div>;
 };
 
 export default WaitingRoom;

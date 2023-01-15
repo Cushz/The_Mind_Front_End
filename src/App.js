@@ -7,6 +7,8 @@ import Error from './Components/ErrorPage/Error'
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import GameRoom from "./Components/GameRoom/GameRoom";
+import CardDeck from "./Components/GameRoom/CardDeck";
+
 
 function App() {
   return (
@@ -20,6 +22,7 @@ function App() {
           <Route exact path="/waiting" element={<WaitingRoom />}></Route>
           <Route exact path="/gameroom" element={<GameRoom/>}></Route>
           <Route exact path="/404" element={<Error />}></Route>
+          <Route exact path="/carddeck" element={<CardDeck />}></Route>
         </Routes>
       </div>
     </Router>

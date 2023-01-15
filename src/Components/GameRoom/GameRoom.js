@@ -5,6 +5,7 @@ import { Box, Text } from '@chakra-ui/react'
 
 
 import React from 'react'
+import CardDeck from './CardDeck';
 
 const GameRoom = () => {
   return (
@@ -13,6 +14,7 @@ const GameRoom = () => {
     <Box className='level-indicator'>
         <Text> Level 12 </Text>
     </Box>
+    <CardDeck/>
     </div>
    </div>
   )

@@ -8,6 +8,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import GameRoom from "./Components/GameRoom/GameRoom";
 import CardDeck from "./Components/GameRoom/CardDeck";
+import MainPage from "./Components/MainPage/MainPage";
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route exact path="/gameroom" element={<GameRoom/>}></Route>
           <Route exact path="/404" element={<Error />}></Route>
           <Route exact path="/carddeck" element={<CardDeck />}></Route>
+          <Route exact path="/mainpage" element={<MainPage/>}></Route>
         </Routes>
       </div>
     </Router>

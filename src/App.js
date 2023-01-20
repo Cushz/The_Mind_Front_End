@@ -9,11 +9,16 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import GameRoom from "./Components/GameRoom/GameRoom";
 import CardDeck from "./Components/GameRoom/CardDeck";
 import MainPage from "./Components/MainPage/MainPage";
+import Navbar from "./Components/Navbar/Navbar";
+import Navbar2 from "./Components/Navbar/Navbar2";
+import LogOut from "./Components/Navbar/LogOut";
+import VideoPopup from "./Components/MainPage/VideoPopup"
 
 
 function App() {
   return (
     <Router>
+      <Navbar2/>
       <div className="App">
         <Routes>
           <Route exact path="/auth" element={<Auth />}></Route>
@@ -25,6 +30,9 @@ function App() {
           <Route exact path="/404" element={<Error />}></Route>
           <Route exact path="/carddeck" element={<CardDeck />}></Route>
           <Route exact path="/mainpage" element={<MainPage/>}></Route>
+          <Route exact path="/logout" element={<LogOut/>}></Route>
+          <Route exact path="/video" element={<VideoPopup/>}></Route>
+
         </Routes>
       </div>
     </Router>

@@ -1,0 +1,118 @@
+.modalBackground {
+  background: inherit;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 998;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* add transition effect */
+  transition: opacity 0.5s ease-in-out;
+  
+
+}
+
+
+
+  .modalContainer {
+    font-family: Montserrat;
+    position: absolute;
+    top: 250px;
+    left: 425px;
+    width: 646px;
+    height: 300px;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+    z-index: 999;
+  }
+  
+  .modalContainer .title {
+    display: inline-block;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  .titleCloseBtn {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .titleCloseBtn button {
+    background-color: transparent;
+    border: none;
+    font-size: 25px;
+    cursor: pointer;
+  }
+  
+  /* .modalContainer .secondtitle {
+    flex: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 23px;
+    text-align: center;
+    color: #5A5A5A;
+    margin-top: -75px;
+
+  } */
+  
+  .modalContainer .footer {
+    flex: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* .modalContainer .footer button {
+    width: 150px;
+    height: 45px;
+    margin: 10px;
+    border: none;
+    background-color: cornflowerblue;
+    color: white;
+    border-radius: 8px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+   */
+  #cancelBtn {
+    background-color: crimson;
+  }
+
+  .title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+
+  }
+
+
+    .logoutbutton {
+      position: absolute;
+      width: 300px;
+      height: 100px;
+      margin-left: 5rem;
+      margin-bottom: 40px;
+      margin-top: 50px;
+      background: #02162F;
+      border-radius: 7px;
+    }
+
+    .secondtitle {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 23px;
+      color: #5A5A5A;
+
+      
+    }

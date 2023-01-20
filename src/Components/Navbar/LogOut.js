@@ -5,7 +5,7 @@ import xicon from '../../images/x.png'
 
 function LogOut(props) {
 
-  // const [isOpenModal, setOpenModal] = useState(false);
+
   return (
     <div className="modalBackground">
       <div className="modalContainer">

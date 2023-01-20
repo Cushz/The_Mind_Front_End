@@ -32,7 +32,7 @@ const Navbar = () => {
     }
   }, [location]);
 
-  console.log(isOpenModal);
+
 
   return (
     <>

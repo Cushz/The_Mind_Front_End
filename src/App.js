@@ -12,13 +12,14 @@ import MainPage from "./Components/MainPage/MainPage";
 import Navbar from "./Components/Navbar/Navbar";
 import Navbar2 from "./Components/Navbar/Navbar2";
 import LogOut from "./Components/Navbar/LogOut";
-import VideoPopup from "./Components/MainPage/VideoPopup"
+import VideoModal from "./Components/MainPage/VideoModal"
+
 
 
 function App() {
   return (
     <Router>
-      <Navbar2/>
+      <Navbar/>
       <div className="App">
         <Routes>
           <Route exact path="/auth" element={<Auth />}></Route>
@@ -28,10 +29,9 @@ function App() {
           <Route exact path="/waiting" element={<WaitingRoom />}></Route>
           <Route exact path="/gameroom" element={<GameRoom/>}></Route>
           <Route exact path="/404" element={<Error />}></Route>
-          <Route exact path="/carddeck" element={<CardDeck />}></Route>
           <Route exact path="/mainpage" element={<MainPage/>}></Route>
           <Route exact path="/logout" element={<LogOut/>}></Route>
-          <Route exact path="/video" element={<VideoPopup/>}></Route>
+          <Route exact path="/video" element={<VideoModal/>}></Route>
 
         </Routes>
       </div>

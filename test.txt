@@ -1,0 +1,37 @@
+import React, { useState } from "react";
+import "./VideoPopupStyles.css";
+import { Box, Button, Image, Text } from "@chakra-ui/react";
+import xicon from '../../images/x.png'
+import ReactPlayer from 'react-player'
+
+function VideoPopup(props) {
+
+
+  return (
+    <div className="modalBackground">
+      <div className="modalContainer">
+        <div className="titleCloseBtn">
+          <button onClick={() => props.setOpenModal(!props.isOpenModal)}>
+            <Image cursor={'pointer'} width={'1rem'} src={xicon}></Image>
+          </button>
+        </div>
+        <div className="title">
+          <Text color={'black'} fontWeight='500' fontFamily={'Montserrat'} fontSize={'20px'} position={'absolute'} top='20px' left={'220px'}>To learn the game, please check the How to Play video.</Text>
+        <Box
+        position={'absolute'}
+        as='iframe'
+        controls
+        src="https://youtube.com/embed/HGCYwaZUFvQ"
+        width={'970px'}
+        height={'45px'}
+        left='35px'
+        allowFullScreen
+
+        />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default VideoPopup;

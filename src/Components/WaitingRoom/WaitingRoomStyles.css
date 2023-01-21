@@ -17,23 +17,8 @@
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
     box-shadow: 0.2em 0.6em 5em ;
+    border-radius: 0.4em;
     width: 25em;
-    height: 35em;
-    display: flex;
-    flex-direction: column;
+    height: 37em;
     padding: 3em;
-}
-
-.copy-button {
-    opacity: 1;
-    transition: opacity 0.05s;
-}
-
-.copy-button:hover {
-    transition: all 20ms ease-in-out;
-    color: rgba(0, 0, 0, 0.5);
-}
-
-.copy-button-active {
-    cursor: default;
 }

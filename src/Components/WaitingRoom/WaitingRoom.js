@@ -1,122 +1,118 @@
-import React from "react";
+import React, {useContext, useEffect, useState} from "react";
 import "./WaitingRoomStyles.css";
-import { CopyIcon } from "@chakra-ui/icons";
-import { Heading,Button,Avatar,Text,Flex} from "@chakra-ui/react";
-import { AiOutlineCloseCircle } from "react-icons/ai";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-
+import { Heading,Button,Text,Flex,useClipboard, VStack, Tooltip} from "@chakra-ui/react";
+import PlayerRow from "./playerRow";
+import { SocketContext } from "../../context/SocketContext";
+import { getRoomByPlayerUsername } from "../../api/getRoomByPlayerUsername";
+import { getUserInfo } from "../../api/getUserInfo";
+import { useNavigate } from "react-router";
 
 const CreateJoin = () => {
-  const [isHovered, setIsHovered] = React.useState(false);
-  const [text, setText] = React.useState("Copy Link");
-  const [isActive, setIsActive] = React.useState(false);
 
-  const handleClick = () => {
-    setIsActive(!isActive);
-    setText("Copied!");
-    setTimeout(() => setText('Copy Link'), 1000);
-    setTimeout(() => setIsActive(false), 1000);
-    setIsHovered(!isHovered);
-  };
+  const { onCopy, value, setValue, hasCopied } = useClipboard("");
+  const socket = useContext(SocketContext);
+  const navigate = useNavigate();
+  const [user, setUser] = useState({firstname: '', lastname: '', date_of_birth: '', username: '', email: '', avatar: {id: 0, imageUrl: ''}}); 
+  const [room, setRoom] = useState({id: '', admin: {}, joinedPlayers: [], readyPlayers: []});
+  const [startGameStatus, setStartGameStatus] = useState({status: true, message: ''});
+  const [playerReadyStatus, setPlayerReadyStatus] = useState(false);
 
+  useEffect(() => {
 
-  const handleMouseEnter = () => {
-    setTimeout(() => {
-      setIsHovered(true);
-    }, 20);
-  };
+    async function fetchRoomData() {
 
-  const handleMouseLeave = () => {
-    setTimeout(() => {
-      setIsHovered(false);
-  }, 20);
+      const user = await getUserInfo();
+      setUser(user);
+      const data = await getRoomByPlayerUsername(user.username);
 
-  };
+      if (!data) {
+        navigate('/lobby');
+        return;
+      }
+      setRoom(data);
+      setValue(data.id);
+    }
 
+    fetchRoomData();
 
-  return (
-  <Flex className="PlayerList-container">
-    <div class="PlayerList">
-      <Flex justifyContent={"center"}>
-        <Heading size={"lg"} color={"white"} textAlign={"center"}>PLAYERS 4/4</Heading>
-      </Flex>
-      
-      <Flex  color={"white"} mt={"4em"} flexDirection={"column"} >
+    socket.on('playerJoined', () => fetchRoomData());
+    socket.on('lobbyReconnect', () => fetchRoomData());
+    socket.on('gameReconnect', () => navigate('/game'));
+    socket.on('playerLeft', () => fetchRoomData());
+    socket.on('playerReady', () => fetchRoomData());
+    socket.on('playerUnReady', () => fetchRoomData());
+    socket.on('kicked', () => navigate('/lobby'));
+
+    socket.on('gameNotStarted', (data) => setStartGameStatus({status: false, message: data.message}));
+
+  }, [socket, setValue, navigate]);
+
+  const handleLeaveRoom = () => {
+    socket.emit('leaveRoom', {roomId: room.id});
+    navigate('/lobby')
+  }
+
+  const handleReady = () => {
+    socket.emit('playerReady', {roomId: room.id});
+    setPlayerReadyStatus(true);
+  }
+
+  const handleUnReady = () => {
+    socket.emit('playerUnReady', {roomId: room.id});
+    setPlayerReadyStatus(false);
+  }
+
+  const handleStartGame = () => {
+    socket.emit('startGame', {roomId: room.id});
+  }
+
+    return (
+      <Flex className="PlayerList-container">
+        <div className="PlayerList">
+          <Flex justifyContent={"center"}>
+            <Heading size={"lg"} color={"white"} textAlign={"center"}>PLAYERS {room.joinedPlayers.length}/4</Heading>
+          </Flex>
+    
+          <VStack
+            align='stretch'
+            h='40vh'
+            marginTop={'2em'}
+          >
+    
+            <PlayerRow playerData={room.admin} roomData={room}/>
+
+            {room.joinedPlayers.map((player) => {
+              if (!player.isAdmin){
+                return <PlayerRow key={player.username} playerData={player} roomData={room} />
+              }else return null;
+              
+            })}
+    
+          </VStack>
+               
+          <Flex width={"100%"} justifyContent={"space-between"} >
+                <Tooltip hasArrow label={value}>
+                <Button w={"45%"} h={"3.2em"} onClick={onCopy}>{hasCopied ? "Copied!" : "Copy"}</Button>
+                </Tooltip>
+                {room.admin.username === user.username ? 
+                <Button w={"45%"} h={"3.2em"} colorScheme='green' onClick={handleStartGame} >Start</Button> :  
+                !playerReadyStatus ? <Button w={"45%"} h={"3.2em"} colorScheme='green' onClick={handleReady}>Ready</Button> : 
+                <Button w={"45%"} h={"3.2em"} colorScheme='green' onClick={handleUnReady}>Unready</Button>}
+          </Flex >
           
-          <Flex  p={"0.3em"} bg={"white"}  color={"black"} borderRadius={"3px"} mb={"1em"} >
+          {!startGameStatus.status &&
+          <Flex justifyContent={'center'} mb={'-1vw'}>
+            <Text fontSize={'xs'} color={'red'}>{startGameStatus.message}</Text>
+          </Flex>
+          }
 
-            <Flex alignItems={"center"} justifyContent={"center"}  width={"20%"}>
-              <Avatar border={"3px solid green"} w={"2.3em"} h={"2.3em"} src="https://bit.ly/dan-abramov" />
-            </Flex>
-
-            <Flex alignItems={"center"} width={"60%"}>
-              <Text fontWeight={"bold"} m={"none"}  > nickname </Text>
-            </Flex>
-
-            <Flex justifyContent={"center"} alignItems={"center"} width={"20%"}>
-              <AiOutlineCloseCircle fontSize={"2em"}   cursor={"pointer"}  />
-            </Flex>
-
-          </Flex >
-
-          <Flex  p={"0.3em"} bg={"white"}  color={"black"} borderRadius={"3px"} mb={"1em"} >
-            
-            <Flex alignItems={"center"} justifyContent={"center"}  width={"20%"}>
-              <Avatar w={"2em"} h={"2em"} src="https://bit.ly/dan-abramov" />
-            </Flex>
-
-            <Flex alignItems={"center"} width={"60%"}>
-              <Text m={"none"} fontWeight={"bold"} > nickname </Text>
-            </Flex>
-
-            <Flex justifyContent={"center"} alignItems={"center"} width={"20%"}>
-              <AiOutlineCloseCircle fontSize={"2em"} cursor={"pointer"}  />
-            </Flex>
-
-          </Flex >
-      
-          <Flex  p={"0.3em"} bg={"white"}  color={"black"} borderRadius={"3px"} mb={"1em"} >
-            
-            <Flex alignItems={"center"} justifyContent={"center"}  width={"20%"}>
-              <Avatar w={"2em"} h={"2em"} src="https://bit.ly/dan-abramov" />
-            </Flex>
-
-            <Flex alignItems={"center"} width={"60%"}>
-              <Text m={"none"} fontWeight={"bold"} > nickname </Text>
-            </Flex>
-
-            <Flex justifyContent={"center"} alignItems={"center"} width={"20%"}>
-              <AiOutlineCloseCircle fontSize={"2em"} cursor={"pointer"}  />
-            </Flex>
-
-          </Flex >
-        
-          <Flex  p={"0.3em"} bg={"white"}  color={"black"} borderRadius={"3px"} mb={"1em"} >
-            
-            <Flex alignItems={"center"} justifyContent={"center"}  width={"20%"}>
-              <Avatar w={"2em"} h={"2em"} src="https://bit.ly/dan-abramov" />
-            </Flex>
-
-            <Flex alignItems={"center"} width={"60%"}>
-              <Text m={"none"} fontWeight={"bold"} > nickname </Text>
-            </Flex>
-
-            <Flex justifyContent={"center"} alignItems={"center"} width={"20%"}>
-              <AiOutlineCloseCircle fontSize={"2em"} cursor={"pointer"}  />
-            </Flex>
-
-          </Flex >
-
+          <Flex justifyContent={'center'} >
+            <Button marginTop={'1em'} colorScheme={'red'} onClick={handleLeaveRoom}>Leave</Button>
+          </Flex>
+        </div>
+        <Text style={{ position: 'absolute', bottom: 0 }} fontSize={'xs'} marginBottom={'1vw'} textAlign={'center'} color={'#9B9B9B'}>All rights reserved © 2022 The Mind</Text>
       </Flex>
-      <Flex mt={"3em"} width={"100%"} justifyContent={"space-between"} >
-        <CopyToClipboard text="nenonushdukamal">
-            <Button  className={isActive ? 'active-copy-button' : 'copy-button'} position="sticky" isDisabled={isActive}  onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={handleClick} w={"45%"} h={"3.2em"} > {isHovered && isActive === false ? <CopyIcon transition="all ease-out 0.3s"/> : text }</Button>
-            </CopyToClipboard>
-            <Button w={"45%"} h={"3.2em"} >Start</Button>
-      </Flex >
-    </div>
-  </Flex>
-  )
+      )
 };
 
 export default CreateJoin;

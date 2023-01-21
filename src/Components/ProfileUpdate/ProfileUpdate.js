@@ -4,18 +4,18 @@ import "./ProfileUpdateStyles.css"
 import { InputGroup, InputRightElement, Box,SimpleGrid,Avatar, FormLabel,Input, Flex, Text, Button, Heading,FormControl, Modal, useDisclosure, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, ModalCloseButton} from "@chakra-ui/react";
 import { getUserInfo } from '../../api/getUserInfo';
 import { updateUserInfo } from '../../api/updateUserInfo';
-import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons'
+import { CheckCircleIcon, WarningIcon, RepeatIcon } from '@chakra-ui/icons'
 import validateUsername from '../../api/validateUsername';
 import updateUsername from '../../api/updateUsername';
+import getAvatars from '../../api/getAvatars';
 
 export default function ProfileUpdate() {
-    const database = ["https://bit.ly/dan-abramov","https://bit.ly/prosper-baba","https://bit.ly/kent-c-dodds","https://bit.ly/ryan-florence"];
-    const [profile, setProfile] = useState("https://bit.ly/dan-abramov")
-    const [index, setIndex] = useState(0)
+    // const [index, setIndex] = useState(0)
     const [errorMessage, setErrorMessage] = useState(null);
 
-    const [originalUser, setOriginalUser] = useState({firstname: '', lastname: '', date_of_birth: ''});
-    const [user, setUser] = useState({firstname: '', lastname: '', date_of_birth: '', username: '', email: ''});
+    const [avatars, setAvatars] = useState([]);
+    const [originalUser, setOriginalUser] = useState({firstname: '', lastname: '', date_of_birth: '', avatar: {id: 0, imageUrl: ''} });
+    const [user, setUser] = useState({firstname: '', lastname: '', date_of_birth: '', username: '', email: '', avatar: {id: 0, imageUrl: ''}});
     const [isUsernameValid, setIsUsernameValid] = useState(false);
     const [newUserName, setNewUserName] = useState('');
 
@@ -24,26 +24,46 @@ export default function ProfileUpdate() {
     const {isOpen: isUsernameChangeOpen, onOpen: onUsernameChangeOpen, onClose: onUsernameChangeClose} = useDisclosure();
 
     useEffect(() => {
-      async function getUser() {
-        const data = await getUserInfo();
-        if (!data) {
+      async function getUserData() {
+        const userData = await getUserInfo();
+        if (!userData) {
             setErrorMessage("Something went wrong");
             return; 
         }
-        setUser(data);
-        setOriginalUser(data);
+        setUser(userData);
+        setOriginalUser(userData);
       }
-      getUser(); 
+      async function getAvatarData() {
+        const avatarData = await getAvatars();
+        if (!avatarData) {
+            setErrorMessage("Something went wrong");
+            return; 
+        }
+        setAvatars(avatarData);
+      }
+
+      getUserData(); 
+      getAvatarData();
     }, []);
 
     function onPhotoChange () 
     {  
-       setProfile(database[index])
-       setIndex(index + 1)
-       if (index === database.length-1)
-       {
-        setIndex(0)
-       }
+
+      // setUser({...user, avatar: avatars[index]})
+      // setIndex(avatars.indexOf(user.avatar.id) + 1)
+      // if (index === avatars.length-1)
+      // {
+      // setIndex(0)
+      // }
+      console.log(user.avatar)
+
+      const newAvatar = avatars.find(avatar => avatar.id === user.avatar.id + 1)
+
+      if (newAvatar) {
+        setUser({...user, avatar: newAvatar})
+      } else {
+        setUser({...user, avatar: avatars[0]})
+      }
        
     }
 
@@ -53,6 +73,7 @@ export default function ProfileUpdate() {
         firstname: user.firstname,
         lastname: user.lastname,
         date_of_birth: user.date_of_birth,
+        avatarId: user.avatar.id
       }
       
       const data = await updateUserInfo(updateUserDto);
@@ -93,9 +114,8 @@ export default function ProfileUpdate() {
     <Text>Update your photos and personal details here.</Text>
         </Box>
     <Box justifySelf={"flex-end"}>
-        <Avatar className="avatar" w={"7em"} h={"7em"} src={profile}>
-        <img className='buttonImage' src="../images/change.png" alt='change' onClick={onPhotoChange} />
-
+        <Avatar  className="avatar" w={"7em"} h={"7em"} src={process.env.REACT_APP_API_URL + user.avatar.imageUrl }>
+        <RepeatIcon boxSize={7} bg={'white'} color={'black'} borderRadius={'50%'} className='buttonImage' onClick={onPhotoChange} />
         </Avatar>
     </Box>
     

@@ -111,6 +111,16 @@
     margin-bottom: 1.2em !important;
 }
 
+.confpass
+{
+    margin-bottom: 0em !important;
+}
+
+.gender
+{
+    margin-top: 1.2em !important;
+}
+
 .name, .surname
 {
     width: 48% !important;
